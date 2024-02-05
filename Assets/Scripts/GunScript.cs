@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class GunScript : MonoBehaviour {
 
-    public bool isEquipped;
+    private bool isEquipped;
     private int clipSize = 30;
     private int currBullets;
     private int rsrvBullets;
@@ -29,7 +29,7 @@ public class GunScript : MonoBehaviour {
         currBullets = clipSize;
         maxAmmo = clipSize * 5;
         rsrvBullets = clipSize * 2;
-        timeBetweenShots = 0.1f;
+        timeBetweenShots = 0.125f;
         shootTime = 0;
 
         interactScript = this.AddComponent<InteractScript>();
@@ -76,7 +76,7 @@ public class GunScript : MonoBehaviour {
             // check if player has any bullets in reserve
             if (rsrvBullets > 0) {
 
-                // if players doesnt have enough reserve bullets to top off mag
+                // if player doesnt have enough reserve bullets to top off mag
                 if (rsrvBullets < clipSize - currBullets) {
                     currBullets += rsrvBullets;
                     rsrvBullets = 0;
@@ -96,9 +96,13 @@ public class GunScript : MonoBehaviour {
         }
     }
 
-    public void PickUp() {
-        //controller.EquipWeapon(this.gameObject);
-        //playerCamera = controller.userCamera;
+    public void EquipWeapon(Camera _playerCamera) {
+        playerCamera = _playerCamera;
+        isEquipped = true;
+    }
+
+    public void DropWeapon() {
+        isEquipped = false;
     }
 
     private void ShowTracer(Vector3 bulletLandPoint) {

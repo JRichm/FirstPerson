@@ -8,7 +8,7 @@ public class Interactable : MonoBehaviour
     public void Interact(InteractController controller) {
         Debug.Log("Interacted with " + this.gameObject.name);
         if (this.gameObject.GetComponent<GunScript>() != null) {
-            
+            controller.gameObject.GetComponent<WeaponController>().EquipWeapon(this.gameObject);
         }
     }
 
