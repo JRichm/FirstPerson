@@ -9,7 +9,7 @@ public class WeaponController : MonoBehaviour {
     [SerializeField] private GameObject weaponHolderAnchor;
     [SerializeField] private Camera playerCam;
 
-    private List<GameObject> weaponInventory = new List<GameObject>();
+    private readonly List<GameObject> weaponInventory = new();
     private int currentWeaponIndex = 0;
 
     private void Update() {
@@ -38,11 +38,11 @@ public class WeaponController : MonoBehaviour {
         }
 
         // Check if the weapon object has the required components
-        BoxCollider weaponCollider = weaponObj.GetComponent<BoxCollider>();
-        Rigidbody weaponRB = weaponObj.GetComponent<Rigidbody>();
-        GunScript gunScript = weaponObj.GetComponent<GunScript>();
+        BoxCollider weaponColl = weaponObj.GetComponent<BoxCollider>();
+        Rigidbody weaponRB     = weaponObj.GetComponent<Rigidbody>();
+        GunScript gunScript    = weaponObj.GetComponent<GunScript>();
 
-        if (weaponCollider == null || weaponRB == null || gunScript == null) {
+        if (weaponColl == null || weaponRB == null || gunScript == null) {
             Debug.LogError("The weapon object is missing required components.");
             return;
         }
@@ -55,7 +55,7 @@ public class WeaponController : MonoBehaviour {
             weaponInventory.Add(weaponObj);
 
             // disable weapon collider while being held 
-            weaponCollider.enabled = false;
+            weaponColl.enabled = false;
 
             // remove weapon physics
             weaponRB.isKinematic = true;
@@ -64,9 +64,8 @@ public class WeaponController : MonoBehaviour {
             gunScript.EquipWeapon(playerCam);
 
             // set weapons parent to player's weapon holder and set position/rotation
-            weaponObj.transform.parent = weaponHolder.transform;
-            weaponObj.transform.position = weaponHolder.transform.position;
-            weaponObj.transform.rotation = weaponHolder.transform.rotation;
+            weaponObj.transform.parent   = weaponHolder.transform;
+            weaponObj.transform.SetPositionAndRotation(weaponHolder.transform.position, weaponHolder.transform.rotation);
 
             // switch to the new weapon
             SwitchWeapon(1);
@@ -105,8 +104,6 @@ public class WeaponController : MonoBehaviour {
 
         // remove weapon parent
         weaponObject.transform.parent = null;
-
-        weaponObject.GetComponent<GunScript>().DropWeapon();
 
         // re-enable weapon collider
         weaponObject.GetComponent<BoxCollider>().enabled = true;

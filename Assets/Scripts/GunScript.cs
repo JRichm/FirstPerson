@@ -7,15 +7,12 @@ using UnityEngine;
 
 public class GunScript : MonoBehaviour {
 
-    private bool isEquipped;
-    private int clipSize = 30;
+    private readonly int clipSize = 30;
     private int currBullets;
     private int rsrvBullets;
-    private int maxAmmo;
     private float timeBetweenShots;
     private Camera playerCamera;
 
-    private InteractScript interactScript;
     private AudioSource audioSource;
     [SerializeField] private GameObject shootFromPoint;
     //[SerializeField] private Material tracerMaterial;
@@ -24,15 +21,12 @@ public class GunScript : MonoBehaviour {
 
     private void Start() {
 
-        isEquipped = false;
-
         currBullets = clipSize;
-        maxAmmo = clipSize * 5;
         rsrvBullets = clipSize * 2;
         timeBetweenShots = 0.125f;
         shootTime = 0;
 
-        interactScript = this.AddComponent<InteractScript>();
+        this.AddComponent<InteractScript>();
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -43,14 +37,16 @@ public class GunScript : MonoBehaviour {
     }
 
     public void HandleShoot() {
-        if (currBullets > 0) {
-            if (shootTime <= 0) {
 
-                RaycastHit lookatPoint;
+        // make sure player has ammo
+        if (currBullets > 0) {
+
+            // wait for next shot
+            if (shootTime <= 0) {
 
                 Vector3 bulletLandPoint;
 
-                if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out lookatPoint)) {
+                if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out RaycastHit lookatPoint)) {
                     bulletLandPoint = lookatPoint.point;
                 } else {
                     bulletLandPoint = playerCamera.transform.forward * 1000;
@@ -62,6 +58,7 @@ public class GunScript : MonoBehaviour {
 
                 shootTime = timeBetweenShots;
             }
+
         } else if (rsrvBullets < 0) {
             Debug.Log("No ammo");
             Reload();
@@ -82,7 +79,7 @@ public class GunScript : MonoBehaviour {
                     rsrvBullets = 0;
                     Debug.Log("Partially reloaded");
 
-                    // fill mag and subtract from reserve bullets
+                // fill mag and subtract from reserve bullets
                 } else {
                     currBullets = clipSize;
                     rsrvBullets -= clipSize - currBullets;
@@ -98,16 +95,5 @@ public class GunScript : MonoBehaviour {
 
     public void EquipWeapon(Camera _playerCamera) {
         playerCamera = _playerCamera;
-        isEquipped = true;
-    }
-
-    public void DropWeapon() {
-        isEquipped = false;
-    }
-
-    private void ShowTracer(Vector3 bulletLandPoint) {
-        //GameObject newTracer = new GameObject("Tracer");
-        //TracerScript tracerScript = newTracer.AddComponent<TracerScript>();
-        //tracerScript.ShowTracer(shootFromPoint.transform.position, bulletLandPoint, tracerMaterial);
     }
 }
