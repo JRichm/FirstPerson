@@ -60,7 +60,7 @@ public class GunScript : MonoBehaviour {
             }
 
         } else if (rsrvBullets < 0) {
-            Debug.Log("No ammo");
+            Debug.Log("Not enough ammo ammo");
             Reload();
         }
     }
